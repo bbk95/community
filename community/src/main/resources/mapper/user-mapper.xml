@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.UserMapper">
+
+    <sql id="insertFields"> --  替换注释里的内容，可以复用
+        username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+
+    <sql id="selectFields"> --  替换注释里的内容，可以复用
+        id, username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+
+<!--    <select id="selectById" resultType="User"> &#45;&#45; 配置里面已经写了全限定名 所以只要写User可以-->
+<!--        select id, username, password, salt, email, type, status, activation_code, header_url, create_time-->
+<!--        from user-->
+<!--        where id = #{id}-->
+<!--    </select>-->
+
+    <select id="selectById" resultType="User"> -- 配置里面已经写了全限定名 所以只要写User可以
+        select <include refid="selectFields"></include>
+        from user
+        where id = #{id}
+    </select>
+
+    <select id="selectByName" resultType="User">
+        select <include refid="selectFields"></include>
+        from user
+        where username = #{username}
+    </select>
+
+    <select id="selectByEmail" resultType="User">
+        select <include refid="selectFields"></include>
+        from user
+        where email = #{email}
+    </select>
+
+<!--    增加的时候有一个参数，要声明好什么类型的(User) 简单的不用，是一个bean就需要 默认识别不了的就需要，不是Java自带的参数类型-->
+<!--    还有增加一个属性，与id主键对应的属性名，增加的时候，MySQL自动生成id，mybatis获取id回填user，增加的时候没有，需要属性是谁-->
+    <insert id="insertUser" parameterType="User" keyProperty="id">
+        insert into user (<include refid="insertFields"></include>)
+        values (#{username}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
+    </insert>
+
+    <update id="updateStatus">
+        update user set status = #{status} where id = #{id}
+    </update>
+
+    <update id="updateHeader">
+        update user set header_url = #{headerUrl} where id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        update user set password = #{password} where id = #{id}
+    </update>
+
+</mapper>
